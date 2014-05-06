@@ -2,10 +2,31 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Conway's Game of Life</title>
-    <script type="text/javascript" src="Scripts/knockout-3.1.0.js"></script>
-    <script type="text/javascript" src="Scripts/GameOfLife.js"></script>
 </head>
 <body>
+    <style>
+        td {
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+        }
 
+        td.alive {
+            background-color: black;
+        }
+    </style>
+    <table>
+        <tbody data-bind="foreach: game.rows">
+            <tr data-bind="foreach: cells">
+                <td data-bind="css: { alive: isAlive }, click: toggle"></td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="#" data-bind="click: start, visible: shouldAllowStart">Start</a>
+    <script type="text/javascript" src="Scripts/knockout-3.1.0.js"></script>
+    <script type="text/javascript" src="Scripts/GameOfLife.js"></script>
 </body>
 </html>
