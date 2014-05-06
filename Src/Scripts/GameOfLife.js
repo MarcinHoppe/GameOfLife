@@ -19,31 +19,30 @@ function Game(size) {
     self.rows = makeRows(size);
 
     self.makeStep = function () {
-        var oldGrid = scan(self.rows),
-            newGrid = update(oldGrid);
-        render(self.rows, newGrid);
+        var current = scan(self.rows),
+            next = update(current);
+        render(self.rows, next);
     };
 }
 
 function scan(rows) {
-    var grid = [],
-        i, j;
-    for (i = 0; i < rows.length; ++i) {
-        grid.push([]);
-        for (j = 0; j < rows.length; ++j) {
-            grid[i].push(rows[i].cells[j].valueOf());
-        }
-    }
-    return grid;
+    var current = [];
+    rows.forEach(function (row) {
+        var currentRow = [];
+        row.cells.forEach(function (cell) {
+            currentRow.push(cell.valueOf());
+        });
+        current.push(currentRow);
+    });
+    return current;
 }
 
-function update(grid) {
-    var result = [],
-        i, j;
-    for (i = 0; i < grid.length; ++i) {
-        result.push([]);
-        for (j = 0; j < grid.length; ++j) {
-            result[i].push(0);
+function update(current) {
+    var next = [];
+    current.forEach(function (currentRow, i) {
+        var nextRow = [];
+        currentRow.forEach(function (currentCell, j) {
+            var nextCellValue = 0;
             var neighbours = [
                 { row: i - 1, column: j - 1 },
                 { row: i - 1, column: j     },
@@ -56,45 +55,45 @@ function update(grid) {
                 { row: i + 1, column: j + 1 }
             ];
             neighbours.forEach(function (cell) {
-                if (grid[cell.row] !== undefined && grid[cell.row][cell.column] !== undefined) {
-                    result[i][j] += grid[cell.row][cell.column];
+                if (current[cell.row] !== undefined &&
+                    current[cell.row][cell.column] !== undefined) {
+                    nextCellValue += current[cell.row][cell.column];
                 }
             });
-        }
-    }
-    return result;
+            nextRow.push(nextCellValue);
+        });
+        next.push(nextRow);
+    });
+    return next;
 }
 
-function render(rows, grid) {
-    var i, j;
-    for (i = 0; i < rows.length; ++i) {
-        for (j = 0; j < rows.length; ++j) {
-            if (grid[i][j] === 3) {
-                rows[i].cells[j].isAlive(true);
-            } else if (grid[i][j] === 4) {
+function render(rows, next) {
+    rows.forEach(function (row, i) {
+        row.cells.forEach(function (cell, j) {
+            if (next[i][j] === 3) {
+                cell.isAlive(true);
+            } else if (next[i][j] === 4) {
                 // Retain state.
             } else {
-                rows[i].cells[j].isAlive(false);
+                cell.isAlive(false);
             }
-        }
-    }
+        });
+    });
 }
 
-function makeRows(howMany) {
-    var result = [],
-        i;
-    for (i = 0; i < howMany; ++i) {
+function makeRows(count) {
+    var result = [];
+    for (var i = 0; i < count; ++i) {
         result.push({
-            cells: makeCells(howMany)
+            cells: makeCells(count)
         });
     }
     return result;
 }
 
-function makeCells(howMany) {
-    var result = [],
-        i;
-    for (i = 0; i < howMany; ++i) {
+function makeCells(count) {
+    var result = [];
+    for (var i = 0; i < count; ++i) {
         result.push(new Cell());
     }
     return result;
