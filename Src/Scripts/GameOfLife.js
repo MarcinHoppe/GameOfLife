@@ -17,11 +17,12 @@ function Game(size) {
     var self = this;
 
     self.rows = makeRows(size);
-    this.makeStep = function () {
+
+    self.makeStep = function () {
         var oldGrid = scan(self.rows),
             newGrid = update(oldGrid);
         render(self.rows, newGrid);
-    }
+    };
 }
 
 function scan(rows) {
